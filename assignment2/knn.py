@@ -58,7 +58,7 @@ for i, instance in enumerate(db):
 
 #print the error rate
 #--> add your Python code here
-print(f"{error_count=} {error_count/rounds}")
+print(f"Error rate:{error_count/rounds}")
 
 
 
