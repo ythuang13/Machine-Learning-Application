@@ -83,15 +83,16 @@ for sample in test_db:
         wind[sample[4]]]])[0]
 
     prediction = "NA"
-    confidence = None
+    confidence = 0.0
     if confidences[0] >= 0.75:
         prediction = "Yes"
         confidence = confidences[0]
     elif confidences [1] >= 0.75:
         prediction = "No"
         confidence = confidences[1]
-        
-    print (sample[0].ljust(15) + sample[1].ljust(15) + sample[2].ljust(15)
-        + sample[3].ljust(15) + sample[4].ljust(15) + prediction.ljust(15)
-        + str(confidence).ljust(15))
+
+    if confidence >= 0.75: 
+        print (sample[0].ljust(15) + sample[1].ljust(15) + sample[2].ljust(15)
+            + sample[3].ljust(15) + sample[4].ljust(15) + prediction.ljust(15)
+            + str(confidence).ljust(15))
 
