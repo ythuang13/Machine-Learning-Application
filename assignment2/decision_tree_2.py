@@ -112,14 +112,14 @@ for ds in dataSets:
             test_label = data[4]
             if test_label == "Yes":
                 if class_predicted == 1:
-                    false_neg += 1
-                else:
                     true_pos += 1
+                else:
+                    false_neg += 1
             else:
                 if class_predicted == 1:
-                    true_neg += 1
-                else:
                     false_pos += 1
+                else:
+                    true_neg += 1
         
         # print(f"{true_pos=} {true_neg=} {false_pos=} {false_neg=}")
         accuracy = (true_pos + true_neg) / (true_pos + true_neg + false_pos + false_neg)
