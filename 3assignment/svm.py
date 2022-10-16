@@ -3,7 +3,7 @@
 # FILENAME: svm.py
 # SPECIFICATION: description of the program
 # FOR: CS 4210- Assignment #3
-# TIME SPENT: 
+# TIME SPENT: 45 mins
 #-----------------------------------------------------------*/
 
 #IMPORTANT NOTE: YOU HAVE TO WORK WITH THE PYTHON LIBRARIES numpy AND pandas to complete this code.
@@ -31,16 +31,20 @@ y_test = np.array(df.values)[:,-1] #getting the last field to create the class t
 
 #created 4 nested for loops that will iterate through the values of c, degree, kernel, and decision_function_shape
 #--> add your Python code here
+max_accuracy = 0.0
 
-for : #iterates over c
-    for : #iterates over degree
-        for : #iterates kernel
-           for : #iterates over decision_function_shape
+for c_value in c: #iterates over c
+    for degree_value in degree: #iterates over degree
+        for kernel_value in kernel : #iterates kernel
+           for dfs_value in decision_function_shape: #iterates over decision_function_shape
+
+                error = 0
+                correct = 0
 
                 #Create an SVM classifier that will test all combinations of c, degree, kernel, and decision_function_shape.
                 #For instance svm.SVC(c=1, degree=1, kernel="linear", decision_function_shape = "ovo")
                 #--> add your Python code here
-                clf = svm.SVC()
+                clf = svm.SVC(C=c_value, degree=degree_value, kernel=kernel_value, decision_function_shape=dfs_value)
 
                 #Fit SVM to the training data
                 clf.fit(X_training, y_training)
@@ -50,10 +54,22 @@ for : #iterates over c
                 #Example. for (x_testSample, y_testSample) in zip(X_test, y_test):
                 #to make a prediction do: clf.predict([x_testSample])
                 #--> add your Python code here
+                for x_testSample, y_testSample in zip(X_test, y_test):
+                    prediction = clf.predict([x_testSample])[0]
+                    if prediction != y_testSample:
+                        error += 1
+                    else:
+                        correct += 1
+                
+                accuracy = correct / (error + correct)
 
                 #check if the calculated accuracy is higher than the previously one calculated. If so, update the highest accuracy and print it together
                 #with the SVM hyperparameters. Example: "Highest SVM accuracy so far: 0.92, Parameters: a=1, degree=2, kernel= poly, decision_function_shape = 'ovo'"
                 #--> add your Python code here
+                if accuracy > max_accuracy:
+                    max_accuracy = accuracy
+                    print(f"Highest SVM accuracy so far: {max_accuracy}, Parameters: c={c_value}," \
+                        f"degree={degree_value}, kernel={kernel_value}, decision_function_shape={dfs_value}")
 
 
 
