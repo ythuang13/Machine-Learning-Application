@@ -1,9 +1,9 @@
 #-------------------------------------------------------------------------
 # AUTHOR: Yitian Huang
 # FILENAME: deep_learning.py
-# SPECIFICATION: Implement deep learning using tensorflow to classify optical digits
+# SPECIFICATION: Implement deep learning using tensorflow to classify fashion items
 # FOR: CS 4210- Assignment #4
-# TIME SPENT: how long it took you to complete the assignment
+# TIME SPENT: 2 hours
 #-----------------------------------------------------------*/
 
 #IMPORTANT NOTE: YOU CAN USE ANY PYTHON LIBRARY TO COMPLETE YOUR CODE.
@@ -15,27 +15,31 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+import os
+os.environ["PATH"] += os.pathsep + 'C:/Program Files/Graphviz/bin/'
+
+
 def build_model(n_hidden, n_neurons_hidden, n_neurons_output, learning_rate):
 
     #-->add your Pyhton code here
 
     #Creating the Neural Network using the Sequential API
-    #model = keras.models.Sequential()
-    #model.add(keras.layers.Flatten(input_shape=[28, 28]))                                #input layer
+    model = keras.models.Sequential()
+    model.add(keras.layers.Flatten(input_shape=[28, 28]))                                #input layer
 
     #iterate over the number of hidden layers to create the hidden layers:
-    #model.add(keras.layers.Dense(n_neurons_hidden, activation="relu"))                   #hidden layer with ReLU activation function
+    for _ in range(n_hidden):
+        model.add(keras.layers.Dense(n_neurons_hidden, activation="relu"))                   #hidden layer with ReLU activation function
 
     #output layer
-    #model.add(keras.layers.Dense(n_neurons_output, activation="softmax"))                #output layer with one neural for each class and the softmax activation function since the classes are exclusive
+    model.add(keras.layers.Dense(n_neurons_output, activation="softmax"))                #output layer with one neural for each class and the softmax activation function since the classes are exclusive
 
     #defining the learning rate
-    #opt = keras.optimizers.SGD(learning_rate)
+    opt = keras.optimizers.SGD(learning_rate)
 
     #Compiling the Model specifying the loss function and the optimizer to use.
-    #model.compile(loss="sparse_categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
-    #return model
-
+    model.compile(loss="sparse_categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
+    return model
 
 #To install Tensor Flow on your terminal
 #python -m pip install --upgrade tensorflow
@@ -59,12 +63,13 @@ n_hidden = [2, 5, 10]
 n_neurons = [10, 50, 100]
 l_rate = [0.01, 0.05, 0.1]
 
+highestAccuracy = 0
 for h in n_hidden:                          #looking or the best parameters w.r.t the number of hidden layers
     for n in n_neurons:                     #looking or the best parameters w.r.t the number of neurons
         for l in l_rate:                    #looking or the best parameters w.r.t the learning rate
 
             #build the model for each combination by calling the function:
-            model = build_model()
+            model = build_model(n_hidden=h, n_neurons_hidden=n, n_neurons_output=len(class_names), learning_rate=l)
 
             #To train the model
             history = model.fit(X_train, y_train, epochs=5, validation_data=(X_valid, y_valid))  #epochs = number times that the learning algorithm will work through the entire training dataset.
@@ -72,10 +77,18 @@ for h in n_hidden:                          #looking or the best parameters w.r.
             #Calculate the accuracy of this neural network and store its value if it is the highest so far. To make a prediction, do:
             class_predicted = np.argmax(model.predict(X_test), axis=-1)
             #-->add your Pyhton code here
-
-            print("Highest accuracy so far: " + str(highestAccuracy))
-            print("Parameters: " + "Number of Hidden Layers: " + str(h) + ",number of neurons: " + str(n) + ",learning rate: " + str(l))
-            print()
+            correct = 0
+            accuracy = 0
+            for i, result in enumerate(class_predicted):
+                ground_truth = y_test[i]
+                if result == ground_truth:
+                    correct += 1
+            accuracy = correct / len(y_test)
+            if accuracy > highestAccuracy:
+                highestAccuracy = accuracy
+                print("Highest accuracy so far: " + str(highestAccuracy))
+                print("Parameters: " + "Number of Hidden Layers: " + str(h) + ",number of neurons: " + str(n) + ",learning rate: " + str(l))
+                print()
 
 #After generating all neural networks, print the final weights and biases of the best model
 weights, biases = model.layers[1].get_weights()
@@ -95,6 +108,3 @@ pd.DataFrame(history.history).plot(figsize=(8, 5))
 plt.grid(True)
 plt.gca().set_ylim(0, 1) # set the vertical range to [0-1]
 plt.show()
-
-
-
