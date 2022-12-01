@@ -3,7 +3,7 @@
 # FILENAME: association_rule_mining.py
 # SPECIFICATION: Apply association rule mining to grocery retail using mlxtend
 # FOR: CS 4210- Assignment #5
-# TIME SPENT: 
+# TIME SPENT: 1.5 hr
 #-----------------------------------------------------------*/
 
 import pandas as pd
@@ -40,8 +40,13 @@ itemset.remove(np.nan)
 
 encoded_vals = []
 for index, row in df.iterrows():
-
     labels = {}
+    for item in itemset:
+        labels[item] = 0
+
+    for item in row:
+        if item is not np.nan:
+            labels[item] = 1
 
     encoded_vals.append(labels)
 
@@ -60,12 +65,32 @@ rules = association_rules(freq_items, metric="confidence", min_threshold=0.6)
 #Prior: 0.4380952380952381
 #Gain in Confidence: 52.17391304347825
 #-->add your python code below
+for index, rule in rules.iterrows():
+    antecedents_list = list(rule.get('antecedents'))
+    print(antecedents_list[0], end="")
+    for item in antecedents_list[1:]:
+        print(f", {item}", end="")
+    print(" -> ", end="")
+    consequents_list = list(rule.get("consequents"))
+    print(consequents_list[0], end="")
+    for item in consequents_list[1:]:
+        print(f", {item}", end="")
+    print()
+    
+    print(f"Support: {rule.get('support')}")
+    print(f"Confidence: {rule.get('confidence')}")
 
-#To calculate the prior and gain in confidence, find in how many transactions the consequent of the rule appears (the supporCount below). Then,
-#use the gain formula provided right after.
-#prior = suportCount/len(encoded_vals) -> encoded_vals is the number of transactions
-#print("Gain in Confidence: " + str(100*(rule_confidence-prior)/prior))
-#-->add your python code below
+    #To calculate the prior and gain in confidence, find in how many transactions
+    # the consequent of the rule appears (the supporCount below). Then,
+    #use the gain formula provided right after.
+    #prior = suportCount/len(encoded_vals) -> encoded_vals is the number of transactions
+    #print("Gain in Confidence: " + str(100*(rule_confidence-prior)/prior))
+    #-->add your python code below
+    rule_confidence = rule.get('confidence')
+    prior = rule.get('consequent support')
+    print(f"Prior: {prior}")
+    print("Gain in Confidence: " + str(100*(rule_confidence-prior)/prior))
+    print()
 
 #Finally, plot support x confidence
 plt.scatter(rules['support'], rules['confidence'], alpha=0.5)
